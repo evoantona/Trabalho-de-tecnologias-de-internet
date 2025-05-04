@@ -1,77 +1,94 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chat - WebSocket</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Estilo personalizado -->
-  <link rel="stylesheet" href="estilo.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat em Tempo Real</title>
+    <!-- Bootstrap CSS linkado via internet (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Estilo CSS local conforme especificado -->
+    <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Projeto Web</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="index.html">Contato (AJAX)</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" href="chat.html">Chat (WebSocket)</a>
-          </li>
-        </ul>
-      </div>
+    <!-- Navbar responsiva com Bootstrap -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Web Multitemática</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Contato</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="chat.html">Chat</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="stock.html">Estoque</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo principal -->
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Chat em Tempo Real (WebSocket)</h1>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <!-- Interface de chat com Bootstrap -->
+                <div class="card">
+                    <div class="card-header">Chat</div>
+                    <div class="card-body" id="chatBox" style="height: 300px; overflow-y: scroll;"></div>
+                    <div class="card-footer">
+                        <form id="chatForm" class="input-group">
+                            <input type="text" class="form-control" id="messageInput" placeholder="Digite sua mensagem..." required>
+                            <button type="submit" class="btn btn-primary">Enviar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </nav>
 
-  <!-- Chat -->
-  <div class="container mt-5">
-    <h1>Chat em Tempo Real (WebSocket)</h1>
-    <div class="chat-container" id="chatBox"></div>
-    <form id="chatForm" class="row g-3">
-      <div class="col-md-10">
-        <input type="text" class="form-control" id="messageInput" placeholder="Digite sua mensagem..." required>
-      </div>
-      <div class="col-md-2">
-        <button type="submit" class="btn btn-primary w-100">Enviar</button>
-      </div>
-    </form>
-  </div>
+    <!-- Bootstrap JS linkado via internet (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Socket.io linkado via internet (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/socket.io@4.7.5/client-dist/socket.io.min.js"></script>
+    <script>
+        // Conecta ao servidor WebSocket
+        const socket = io();
 
-  <!-- Socket.io e Bootstrap JS -->
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // Conexão com WebSocket
-    const socket = io();
-    const chatBox = document.getElementById('chatBox');
-    const chatForm = document.getElementById('chatForm');
-    const messageInput = document.getElementById('messageInput');
+        // Manipula o envio de mensagens
+        document.getElementById('chatForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const message = document.getElementById('messageInput').value;
+            if (message.trim()) {
+                // Envia a mensagem ao servidor
+                socket.emit('chatMessage', message);
+                document.getElementById('messageInput').value = '';
+            }
+        });
 
-    // Recebe mensagens do servidor
-    socket.on('chatMessage', (msg) => {
-      const messageElement = document.createElement('div');
-      messageElement.classList.add('chat-message');
-      messageElement.textContent = msg;
-      chatBox.appendChild(messageElement);
-      chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll
-    });
+        // Recebe e exibe mensagens
+        socket.on('chatMessage', (msg) => {
+            const chatBox = document.getElementById('chatBox');
+            const messageElement = document.createElement('p');
+            messageElement.textContent = msg;
+            chatBox.appendChild(messageElement);
+            // Rolagem automática para o final
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
 
-    // Envia mensagens
-    chatForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const message = messageInput.value.trim();
-      if (message) {
-        socket.emit('chatMessage', message);
-        messageInput.value = '';
-      }
-    });
-  </script>
+        // Exibe status de conexão
+        socket.on('connect', () => {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success';
+            alert.textContent = 'Conectado ao chat!';
+            document.getElementById('chatBox').appendChild(alert);
+        });
+    </script>
 </body>
 </html>

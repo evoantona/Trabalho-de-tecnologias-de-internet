@@ -1,31 +1,30 @@
-/* Estilos personalizados */
+/* Estilos personalizados para complementar o Bootstrap */
+/* Fundo da página */
 body {
     background-color: #f8f9fa;
-  }
-  
-  .navbar-brand {
-    font-weight: bold;
-  }
-  
-  .chat-container {
-    max-height: 400px;
-    overflow-y: auto;
-    border: 1px solid #ccc;
+}
+
+/* Estilo do chat box */
+#chatBox {
+    background-color: #fff;
+    border: 1px solid #ddd;
     padding: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .chat-message {
-    margin-bottom: 10px;
-  }
-  
-  .alert {
+}
+
+/* Margem superior para a tabela de estoque */
+.table {
     margin-top: 20px;
-  }
-  
-  /* Ajustes para responsividade */
-  @media (max-width: 576px) {
-    .container {
-      padding: 10px;
-    }
-  }
+}
+
+/* Navbar fixa no topo */
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* Estilo dos formulários */
+form {
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}

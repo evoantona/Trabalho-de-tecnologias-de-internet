@@ -1,21 +1,21 @@
-// Rotas para requisições AJAX
+// Importa o roteador do Express
 const express = require('express');
 const router = express.Router();
 
-// Rota para processar o formulário de contato
+// Rota POST para o formulário de contato
 router.post('/contact', (req, res) => {
-  const { name, email, message } = req.body;
-  
-  // Validação simples
-  if (!name || !email || !message) {
-    return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
-  }
+    const { name, email, message } = req.body;
 
-  // Simula processamento (ex.: salvar no banco de dados)
-  console.log(`Mensagem recebida de ${name} (${email}): ${message}`);
-  
-  // Resposta de sucesso
-  res.json({ success: 'Mensagem enviada com sucesso!' });
+    // Validação básica
+    if (!name || !email || !message) {
+        return res.status(400).json({ message: 'Por favor, preencha todos os campos.' });
+    }
+
+    // Simula salvamento no banco de dados
+    console.log('Dados recebidos:', { name, email, message });
+
+    // Resposta de sucesso
+    res.status(200).json({ message: 'Mensagem enviada com sucesso!' });
 });
 
 module.exports = router;
