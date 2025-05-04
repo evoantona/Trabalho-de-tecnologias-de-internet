@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página Principal - AJAX</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Estilo personalizado -->
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Projeto Web</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active" href="index.html">Contato (AJAX)</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="chat.html">Chat (WebSocket)</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Formulário de Contato -->
+  <div class="container mt-5">
+    <h1>Formulário de Contato (AJAX)</h1>
+    <form id="contactForm" class="row g-3">
+      <div class="col-md-6">
+        <label for="name" class="form-label">Nome</label>
+        <input type="text" class="form-control" id="name" required>
+      </div>
+      <div class="col-md-6">
+        <label for="email" class="form-label">E-mail</label>
+        <input type="email" class="form-control" id="email" required>
+      </div>
+      <div class="col-12">
+        <label for="message" class="form-label">Mensagem</label>
+        <textarea class="form-control" id="message" rows="4" required></textarea>
+      </div>
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary">Enviar</button>
+      </div>
+    </form>
+    <div id="feedback" class="alert d-none"></div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Manipulação do formulário com AJAX
+    document.getElementById('contactForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const message = document.getElementById('message').value;
+      const feedback = document.getElementById('feedback');
+
+      try {
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, message })
+        });
+        const data = await response.json();
+
+        feedback.classList.remove('d-none', 'alert-danger', 'alert-success');
+        if (response.ok) {
+          feedback.classList.add('alert-success');
+          feedback.textContent = data.success;
+          document.getElementById('contactForm').reset();
+        } else {
+          feedback.classList.add('alert-danger');
+          feedback.textContent = data.error;
+        }
+      } catch (error) {
+        feedback.classList.remove('d-none');
+        feedback.classList.add('alert-danger');
+        feedback.textContent = 'Erro ao enviar a mensagem.';
+      }
+    });
+  </script>
+</body>
+</html>
